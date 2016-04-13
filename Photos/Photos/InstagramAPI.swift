@@ -14,7 +14,7 @@ class InstagramAPI {
         /* 
          * 1. Get the endpoint URL to the popular photos 
          *    HINT: Look in Utils
-         * 2. Create a Session
+         * 2. Create a Session // THEY DID FOR US
          * 3. Create a Data Task with a URL and completionHandler
          *    If no error:
          *       a. Get NSDictionary from the JSON object, from key the "photos"
@@ -23,18 +23,37 @@ class InstagramAPI {
          *       d. Wait for completion of Photos array
          */
         // FILL ME IN
-        var url: NSURL
+        var popularURL: NSURL = Utils.getPopularURL()  // 1. Get the endpoint URL to the popular photos
 
-        let task = NSURLSession.sharedSession().dataTaskWithURL(url) {
+        let task = NSURLSession.sharedSession().dataTaskWithURL(popularURL) {
             (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
             if error == nil {
                 //FIX ME
-                var photos: [Photo]!
+                var photos: [Photo] = [Photo]()
+                
+                // feedDictionary is a dictionary of hella dictionaries. CAST THIS AS AN ARRAY of DICTS.
+                
+                
                 do {
                     let feedDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
                     // FILL ME IN, REMEMBER TO USE FORCED DOWNCASTING
                     
+                    // get NSDictionary from the JSON object, from key the "photos"
+ 
+                    //from feed find value for key "data" => lots of dictionaries
                     
+//                    print("feed dict \(feedDictionary)")
+                    
+                    var list_dicts: [NSDictionary]
+                    list_dicts = feedDictionary["data"] as! [NSDictionary]
+
+                    //go through each element of list_dicts, init PHOTO, stuff into PHOTOS
+                    for p_dict in list_dicts {
+                        var curr_photo = Photo(data: p_dict)
+                        photos.append(curr_photo)
+//                        print("In InstagramAPI: made a photo!")
+                    }
+//                    print("photos: \(photos)")
                     // DO NOT CHANGE BELOW
                     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
                     dispatch_async(dispatch_get_global_queue(priority, 0)) {
